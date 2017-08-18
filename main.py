@@ -64,9 +64,9 @@ def generateHumanReadableDatetime(deltaDate):
             prettyDatetime = prettyDatetime + ", " + str(deltaDate.seconds) + " seconds"
     if deltaDate.microseconds != 0:
         if prettyDatetime == "":
-            prettyDatetime = str(deltaDate.microseconds) + " microseconds"
+            prettyDatetime = str(round(deltaDate.microseconds/1000)) + " ms"
         else:
-            prettyDatetime = prettyDatetime + " and " + str(deltaDate.microseconds) + " microseconds"
+            prettyDatetime = prettyDatetime + " and " + str(round(deltaDate.microseconds/1000)) + " ms"
     return prettyDatetime
 
 
@@ -104,6 +104,10 @@ def query_yes_no(question, default="yes"):
 
 # mypath = "/Volumes/share/Download/"
 mypath = "Y:\\Download\\TODOPHOTOS\\"
+myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
+
+if not os.path.exists(myDeletePath):
+    os.makedirs(myDeletePath)
 
 print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'")
@@ -120,7 +124,8 @@ step1start = datetime.datetime.now()
 
 for subdirectory in next(os.walk(mypath))[1]:
     # if pattern.match(subdirectory):
-    if valid_date(subdirectory.split(" ")[0]):
+    # folderLabel = subdirectory.split(" ", 1)[1]
+    if valid_date(subdirectory.split(" ")[0]) and subdirectory.split(" ", 1)[1].istitle():
         print(bcolors.OKGREEN + "   " + subdirectory)
         cleanDirectories.append(subdirectory)
     else:
@@ -163,6 +168,7 @@ print(bcolors.OKBLUE + ">> Step 1 completed successfully in " + generateHumanRea
 
 
 print(bcolors.OKBLUE + ">> Step 2: Finding orphans RAW files")
+step2start = datetime.datetime.now()
 
 jpgFiles = []
 rawFiles = []
@@ -180,5 +186,29 @@ for rawFile in rawFiles:
     jpgFile = os.path.splitext(rawFile)[0] + '.JPG'
     if not os.path.isfile(jpgFile):
         # photoJpgFilename = os.path.splitext(os.path.join(dirpath, name))[0]+'.JPG'
-        print(jpgFile)
+        rawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS")))
+        if not os.path.exists(rawFileDirectory):
+            os.makedirs(rawFileDirectory)
+        # os.path.dirname(os.path.abspath(rawFile))
+        # print(os.path.dirname(os.path.abspath(rawFile)))
+        # print(rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
+        # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
+        # tmpFileName = rawFile.split("\\")
+        print(bcolors.OKGREEN + "   Orphan file moved: " + rawFile)
 
+step2finish = datetime.datetime.now()
+rd = dateutil.relativedelta.relativedelta (step2finish, step2start)
+print(bcolors.OKBLUE + ">> Step 2 completed successfully in " + generateHumanReadableDatetime(rd))
+
+
+print(bcolors.OKBLUE + ">> Step 3: Renaming files based on EXIF infos")
+step3start = datetime.datetime.now()
+step3finish = datetime.datetime.now()
+rd = dateutil.relativedelta.relativedelta (step3finish, step3start)
+print(bcolors.OKBLUE + ">> Step 3 completed successfully in " + generateHumanReadableDatetime(rd))
+
+print(bcolors.OKBLUE + ">> Step 4: Separating photos JPG<>RAW")
+step4start = datetime.datetime.now()
+step4finish = datetime.datetime.now()
+rd = dateutil.relativedelta.relativedelta (step4finish, step4start)
+print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd))
