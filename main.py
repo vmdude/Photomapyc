@@ -21,7 +21,7 @@ class bcolors:
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    ENDC = '\033[30m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
@@ -207,6 +207,11 @@ def separating_raw_files():
     step4finish = datetime.datetime.now()
     rd = dateutil.relativedelta.relativedelta (step4finish, step4start)
     print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
+
+
+
+
+
 
 mypath = "Y:\\Download\\TODOPHOTOS\\"
 myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
