@@ -3,11 +3,16 @@ import os
 import re
 import datetime
 import dateutil.relativedelta
+import exifread
+import pprint
+import operator
 
 # import string
 from os import listdir, rename
 from os.path import isfile, join
 from time import gmtime, strftime
+from colorama import init
+init()
 
 # Custom class for console color support
 class bcolors:
@@ -32,6 +37,10 @@ def generateValidName(badName):
     # re.sub(r'[^0-9]', '', dateBadName)
     # print()
     return re.sub(r'[^0-9-]', '', dateBadName) + " " + badName.split(" ",1)[1].title()
+
+def generateValidNameFromFolder(badName):
+    dateName = badName.split(" ", 1)[0].replace("-", "")
+    return dateName + "_" + badName.split(" ", 1)[1].title().replace(" ", "").replace(",", "").replace("-", "")
 
 def generateHumanReadableDatetime(deltaDate):
     prettyDatetime = ""
@@ -181,6 +190,7 @@ for dirpath, dirs, files in os.walk(mypath):
         else:
             rawFiles.append(os.path.join(dirpath, name))
 
+orphansRawFiles = []
 
 for rawFile in rawFiles:
     jpgFile = os.path.splitext(rawFile)[0] + '.JPG'
@@ -195,14 +205,50 @@ for rawFile in rawFiles:
         # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
         # tmpFileName = rawFile.split("\\")
         print(bcolors.OKGREEN + "   Orphan file moved: " + rawFile)
+        orphansRawFiles.append(rawFile)
+
+for orphanRawFile in orphansRawFiles:
+    rawFiles.remove(orphanRawFile)
 
 step2finish = datetime.datetime.now()
 rd = dateutil.relativedelta.relativedelta (step2finish, step2start)
 print(bcolors.OKBLUE + ">> Step 2 completed successfully in " + generateHumanReadableDatetime(rd))
 
+jpgCount = len(jpgFiles)
+rawCount = len(rawFiles)
+if jpgCount != rawCount:
+    print(bcolors.FAIL + "Mismatch between JPG count (" + str(jpgCount) + ") and RAW count (" + str(rawCount) + ")! Aborting...")
+    exit()
 
 print(bcolors.OKBLUE + ">> Step 3: Renaming files based on EXIF infos")
 step3start = datetime.datetime.now()
+
+
+for folder in os.listdir(mypath):
+    if os.path.isdir(os.path.join(mypath, folder)):
+        # print(folder)
+        dict = {}
+        initialCount = 1
+        onlyfiles = [f for f in listdir(os.path.join(mypath, folder)) if isfile(join(os.path.join(mypath, folder), f)) and f != '.DS_Store']
+        for fileT in onlyfiles:
+            if fileT.lower().endswith(('.png', '.jpg', '.jpeg')):
+                f = open(join(os.path.join(mypath, folder), fileT), 'rb')
+                # tags = exifread.process_file(f)["EXIF DateTimeOriginal"].values
+                # for tag in tags.keys():
+                #     if tag not in ('JPEGThumbnail', 'TIFFThumbnail', 'Filename', 'EXIF MakerNote'):
+                #         print("Key: %s, value %s" % (tag, tags[tag]))
+                dict[join(os.path.join(mypath, folder), fileT)] = exifread.process_file(f)["EXIF DateTimeOriginal"].values
+                # initialCount += 1
+        for sorted_dict in sorted(dict.items(), key=operator.itemgetter(1)):
+            newName = os.path.join(folder, generateValidNameFromFolder(folder) + "_" + str(initialCount).rjust(3, "0") + ".jpg")
+            # os.rename(sorted_dict[0], newName)
+            print(bcolors.OKGREEN + "   Renaming file " + sorted_dict[0].replace(mypath, "") + " to " + newName.split("\\")[1])
+            initialCount += 1
+        # pprint.pprint(dict)
+        # exit()
+
+# 200803_SalonDuModelismeLeBourget_010.jpg
+
 step3finish = datetime.datetime.now()
 rd = dateutil.relativedelta.relativedelta (step3finish, step3start)
 print(bcolors.OKBLUE + ">> Step 3 completed successfully in " + generateHumanReadableDatetime(rd))
