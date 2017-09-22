@@ -6,6 +6,7 @@ import dateutil.relativedelta
 import exifread
 import pprint
 import operator
+import argparse
 
 # import string
 from os import listdir, rename
@@ -158,9 +159,9 @@ def find_orphan_files():
     for rawFile in rawFiles:
         jpgFile = os.path.splitext(rawFile)[0] + '.JPG'
         if not os.path.isfile(jpgFile):
-            rawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS")))
-            if not os.path.exists(rawFileDirectory):
-                os.makedirs(rawFileDirectory)
+            orphanRawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS")))
+            if not os.path.exists(orphanRawFileDirectory):
+                os.makedirs(orphanRawFileDirectory)
             # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
             print(bcolors.OKGREEN + "   Orphan file moved: " + rawFile)
             orphansRawFiles.append(rawFile)
@@ -204,34 +205,53 @@ def rename_photo_exif():
 def separating_raw_files():
     print(bcolors.OKBLUE + ">> Step 4: Separating photos JPG<>RAW")
     step4start = datetime.datetime.now()
+
+
+
+
     step4finish = datetime.datetime.now()
     rd = dateutil.relativedelta.relativedelta (step4finish, step4start)
     print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
 
 
+# Main routine
+def Main():
+    if __name__ == '__main__':
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--startFolder')
+        args = parser.parse_args()
+
+    mypath = "Y:\\Download\\TODOPHOTOS\\"
+    myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
+    myRawMovePath = "Y:\\Download\\TOMOVERAWPHOTOS\\"
+
+    # aRgument = PhotoFolder
+    # create PhotoFolderWorkDir \todelete
+    #                           \tomovePhotos
+    #                           \tomovePhotosRAW
 
 
 
+    if not os.path.exists(myDeletePath):
+        os.makedirs(myDeletePath)
 
-mypath = "Y:\\Download\\TODOPHOTOS\\"
-myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
+    if not os.path.exists(myRawMovePath):
+        os.makedirs(myRawMovePath)
 
-if not os.path.exists(myDeletePath):
-    os.makedirs(myDeletePath)
+    print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + bcolors.ENDC)
+    print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.ENDC)
 
-print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + bcolors.ENDC)
-print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.ENDC)
+    pattern = re.compile("^([A-Z][0-9]+)+$")
 
-pattern = re.compile("^([A-Z][0-9]+)+$")
+    # First step is directory naming check
+    directory_name_check()
 
-# First step is directory naming check
-directory_name_check()
+    # Second step is finding orphan files and removing them
+    find_orphan_files()
 
-# Second step is finding orphan files and removing them
-find_orphan_files()
+    # Thirs step is renaming photo based on EXIF tags
+    rename_photo_exif()
 
-# Thirs step is renaming photo based on EXIF tags
-rename_photo_exif()
+    # Fourth step is separating JPG files from RAW files
+    separating_raw_files()
 
-# Fourth step is separating JPG files from RAW files
-separating_raw_files()
