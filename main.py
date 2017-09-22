@@ -174,7 +174,8 @@ print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.EN
 pattern = re.compile("^([A-Z][0-9]+)+$")
 
 # Step1 call
-directory_name_check
+directory_name_check()
+exit()
 
 # print(generateHumanReadableDatetime(rd))
 # 3 years, 6 months, 9 days, 1 hours, 11 minutes and 41 seconds
