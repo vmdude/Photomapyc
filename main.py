@@ -118,8 +118,8 @@ myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
 if not os.path.exists(myDeletePath):
     os.makedirs(myDeletePath)
 
-print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'")
+print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + bcolors.ENDC)
+print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.ENDC)
 
 pattern = re.compile("^([A-Z][0-9]+)+$")
 
@@ -128,17 +128,17 @@ cleanDirectories = []
 
 
 # First step is directory naming check
-print(bcolors.OKBLUE + ">> Step 1: Directory naming check")
+print(bcolors.OKBLUE + ">> Step 1: Directory naming check" + bcolors.ENDC)
 step1start = datetime.datetime.now()
 
 for subdirectory in next(os.walk(mypath))[1]:
     # if pattern.match(subdirectory):
     # folderLabel = subdirectory.split(" ", 1)[1]
     if valid_date(subdirectory.split(" ")[0]) and subdirectory.split(" ", 1)[1].istitle():
-        print(bcolors.OKGREEN + "   " + subdirectory)
+        print(bcolors.OKGREEN + "   " + subdirectory + bcolors.ENDC)
         cleanDirectories.append(subdirectory)
     else:
-        print(bcolors.FAIL + "   " + subdirectory)
+        print(bcolors.FAIL + "   " + subdirectory + bcolors.ENDC)
         needFixDirectories.append(subdirectory)
 
 
@@ -170,13 +170,13 @@ step1finish = datetime.datetime.now()
 # dt1 = datetime.datetime.fromtimestamp(123456789) # 1973-11-29 22:33:09
 # dt2 = datetime.datetime.fromtimestamp(234567890) # 1977-06-07 23:44:50
 rd = dateutil.relativedelta.relativedelta (step1finish, step1start)
-print(bcolors.OKBLUE + ">> Step 1 completed successfully in " + generateHumanReadableDatetime(rd))
+print(bcolors.OKBLUE + ">> Step 1 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
 
 # print(generateHumanReadableDatetime(rd))
 # 3 years, 6 months, 9 days, 1 hours, 11 minutes and 41 seconds
 
 
-print(bcolors.OKBLUE + ">> Step 2: Finding orphans RAW files")
+print(bcolors.OKBLUE + ">> Step 2: Finding orphans RAW files" + bcolors.ENDC)
 step2start = datetime.datetime.now()
 
 jpgFiles = []
@@ -212,15 +212,15 @@ for orphanRawFile in orphansRawFiles:
 
 step2finish = datetime.datetime.now()
 rd = dateutil.relativedelta.relativedelta (step2finish, step2start)
-print(bcolors.OKBLUE + ">> Step 2 completed successfully in " + generateHumanReadableDatetime(rd))
+print(bcolors.OKBLUE + ">> Step 2 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
 
 jpgCount = len(jpgFiles)
 rawCount = len(rawFiles)
 if jpgCount != rawCount:
-    print(bcolors.FAIL + "Mismatch between JPG count (" + str(jpgCount) + ") and RAW count (" + str(rawCount) + ")! Aborting...")
+    print(bcolors.FAIL + "Mismatch between JPG count (" + str(jpgCount) + ") and RAW count (" + str(rawCount) + ")! Aborting..." + bcolors.ENDC)
     exit()
 
-print(bcolors.OKBLUE + ">> Step 3: Renaming files based on EXIF infos")
+print(bcolors.OKBLUE + ">> Step 3: Renaming files based on EXIF infos" + bcolors.ENDC)
 step3start = datetime.datetime.now()
 
 
@@ -242,7 +242,7 @@ for folder in os.listdir(mypath):
         for sorted_dict in sorted(dict.items(), key=operator.itemgetter(1)):
             newName = os.path.join(folder, generateValidNameFromFolder(folder) + "_" + str(initialCount).rjust(3, "0") + ".jpg")
             # os.rename(sorted_dict[0], newName)
-            print(bcolors.OKGREEN + "   Renaming file " + sorted_dict[0].replace(mypath, "") + " to " + newName.split("\\")[1])
+            print(bcolors.OKGREEN + "   Renaming file " + sorted_dict[0].replace(mypath, "") + " to " + newName.split("\\")[1] + bcolors.ENDC)
             initialCount += 1
         # pprint.pprint(dict)
         # exit()
@@ -251,10 +251,10 @@ for folder in os.listdir(mypath):
 
 step3finish = datetime.datetime.now()
 rd = dateutil.relativedelta.relativedelta (step3finish, step3start)
-print(bcolors.OKBLUE + ">> Step 3 completed successfully in " + generateHumanReadableDatetime(rd))
+print(bcolors.OKBLUE + ">> Step 3 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
 
 print(bcolors.OKBLUE + ">> Step 4: Separating photos JPG<>RAW")
 step4start = datetime.datetime.now()
 step4finish = datetime.datetime.now()
 rd = dateutil.relativedelta.relativedelta (step4finish, step4start)
-print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd))
+print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
