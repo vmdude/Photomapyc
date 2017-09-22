@@ -111,6 +111,56 @@ def query_yes_no(question, default="yes"):
             sys.stdout.write("Please respond with 'yes' or 'no' "\
                              "(or 'y' or 'n').\n")
 
+def directory_name_check():
+    needFixDirectories = []
+    cleanDirectories = []
+
+    # First step is directory naming check
+    print(bcolors.OKBLUE + ">> Step 1: Directory naming check" + bcolors.ENDC)
+    step1start = datetime.datetime.now()
+
+    for subdirectory in next(os.walk(mypath))[1]:
+        # if pattern.match(subdirectory):
+        # folderLabel = subdirectory.split(" ", 1)[1]
+        if valid_date(subdirectory.split(" ")[0]) and subdirectory.split(" ", 1)[1].istitle():
+            print(bcolors.OKGREEN + "   " + subdirectory + bcolors.ENDC)
+            cleanDirectories.append(subdirectory)
+        else:
+            print(bcolors.FAIL + "   " + subdirectory + bcolors.ENDC)
+            needFixDirectories.append(subdirectory)
+
+
+
+
+    # onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    # print(onlyfiles)
+    # print(needFixDirectories)
+    # print(bcolors.WARNING + "Some directory were malformated, do you want me to try fixing them?")
+    # answer = query_yes_no("Some directory were malformated, do you want me to try fixing them?")
+
+    # if query_yes_no("Some directory were malformated, do you want me to try fixing them?") == "yes":
+        # print("ok")
+
+    for directoryToFix in needFixDirectories:
+        newName = generateValidName(directoryToFix)
+        if newName != directoryToFix:
+            rename(mypath + directoryToFix, mypath + newName)
+        else:
+            sys.exit("Cannot find better name for '" + mypath + directoryToFix + "', this could be caused by wrong date, please fix it before going further, aborting...")
+
+    step1finish = datetime.datetime.now()
+    # step1ttb = step1finish - step1start
+    # print(bcolors.OKBLUE + ">> Step 1 completed successfully in" + divmod(step1ttb.days * 86400 + step1ttb.seconds, 60))
+
+
+
+
+    # dt1 = datetime.datetime.fromtimestamp(123456789) # 1973-11-29 22:33:09
+    # dt2 = datetime.datetime.fromtimestamp(234567890) # 1977-06-07 23:44:50
+    rd = dateutil.relativedelta.relativedelta (step1finish, step1start)
+    print(bcolors.OKBLUE + ">> Step 1 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
+
+
 # mypath = "/Volumes/share/Download/"
 mypath = "Y:\\Download\\TODOPHOTOS\\"
 myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
@@ -123,54 +173,8 @@ print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.EN
 
 pattern = re.compile("^([A-Z][0-9]+)+$")
 
-needFixDirectories = []
-cleanDirectories = []
-
-
-# First step is directory naming check
-print(bcolors.OKBLUE + ">> Step 1: Directory naming check" + bcolors.ENDC)
-step1start = datetime.datetime.now()
-
-for subdirectory in next(os.walk(mypath))[1]:
-    # if pattern.match(subdirectory):
-    # folderLabel = subdirectory.split(" ", 1)[1]
-    if valid_date(subdirectory.split(" ")[0]) and subdirectory.split(" ", 1)[1].istitle():
-        print(bcolors.OKGREEN + "   " + subdirectory + bcolors.ENDC)
-        cleanDirectories.append(subdirectory)
-    else:
-        print(bcolors.FAIL + "   " + subdirectory + bcolors.ENDC)
-        needFixDirectories.append(subdirectory)
-
-
-
-
-# onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-# print(onlyfiles)
-# print(needFixDirectories)
-# print(bcolors.WARNING + "Some directory were malformated, do you want me to try fixing them?")
-# answer = query_yes_no("Some directory were malformated, do you want me to try fixing them?")
-
-# if query_yes_no("Some directory were malformated, do you want me to try fixing them?") == "yes":
-    # print("ok")
-
-for directoryToFix in needFixDirectories:
-    newName = generateValidName(directoryToFix)
-    if newName != directoryToFix:
-        rename(mypath + directoryToFix, mypath + newName)
-    else:
-        sys.exit("Cannot find better name for '" + mypath + directoryToFix + "', this could be caused by wrong date, please fix it before going further, aborting...")
-
-step1finish = datetime.datetime.now()
-# step1ttb = step1finish - step1start
-# print(bcolors.OKBLUE + ">> Step 1 completed successfully in" + divmod(step1ttb.days * 86400 + step1ttb.seconds, 60))
-
-
-
-
-# dt1 = datetime.datetime.fromtimestamp(123456789) # 1973-11-29 22:33:09
-# dt2 = datetime.datetime.fromtimestamp(234567890) # 1977-06-07 23:44:50
-rd = dateutil.relativedelta.relativedelta (step1finish, step1start)
-print(bcolors.OKBLUE + ">> Step 1 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
+# Step1 call
+directory_name_check
 
 # print(generateHumanReadableDatetime(rd))
 # 3 years, 6 months, 9 days, 1 hours, 11 minutes and 41 seconds
