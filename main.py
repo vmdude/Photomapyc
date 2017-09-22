@@ -115,13 +115,10 @@ def directory_name_check():
     needFixDirectories = []
     cleanDirectories = []
 
-    # First step is directory naming check
     print(bcolors.OKBLUE + ">> Step 1: Directory naming check" + bcolors.ENDC)
     step1start = datetime.datetime.now()
 
     for subdirectory in next(os.walk(mypath))[1]:
-        # if pattern.match(subdirectory):
-        # folderLabel = subdirectory.split(" ", 1)[1]
         if valid_date(subdirectory.split(" ")[0]) and subdirectory.split(" ", 1)[1].istitle():
             print(bcolors.OKGREEN + "   " + subdirectory + bcolors.ENDC)
             cleanDirectories.append(subdirectory)
@@ -135,18 +132,19 @@ def directory_name_check():
     # onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     # print(onlyfiles)
     # print(needFixDirectories)
-    # print(bcolors.WARNING + "Some directory were malformated, do you want me to try fixing them?")
+    if needFixDirectories:
+        # print(bcolors.WARNING + "Some directory were malformated, do you want me to try fixing them?")
     # answer = query_yes_no("Some directory were malformated, do you want me to try fixing them?")
 
-    # if query_yes_no("Some directory were malformated, do you want me to try fixing them?") == "yes":
+        if query_yes_no("Some directory were malformated, do you want me to try fixing them?") == "yes":
         # print("ok")
 
-    for directoryToFix in needFixDirectories:
-        newName = generateValidName(directoryToFix)
-        if newName != directoryToFix:
-            rename(mypath + directoryToFix, mypath + newName)
-        else:
-            sys.exit("Cannot find better name for '" + mypath + directoryToFix + "', this could be caused by wrong date, please fix it before going further, aborting...")
+        for directoryToFix in needFixDirectories:
+            newName = generateValidName(directoryToFix)
+            if newName != directoryToFix:
+                rename(mypath + directoryToFix, mypath + newName)
+            else:
+                sys.exit("Cannot find better name for '" + mypath + directoryToFix + "', this could be caused by wrong date, please fix it before going further, aborting...")
 
     step1finish = datetime.datetime.now()
     # step1ttb = step1finish - step1start
@@ -173,9 +171,9 @@ print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.EN
 
 pattern = re.compile("^([A-Z][0-9]+)+$")
 
-# Step1 call
+# First step is directory naming check
 directory_name_check()
-exit()
+
 
 # print(generateHumanReadableDatetime(rd))
 # 3 years, 6 months, 9 days, 1 hours, 11 minutes and 41 seconds
