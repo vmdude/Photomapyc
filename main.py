@@ -139,12 +139,12 @@ def directory_name_check():
         if query_yes_no("Some directory were malformated, do you want me to try fixing them?") == "yes":
         # print("ok")
 
-        for directoryToFix in needFixDirectories:
-            newName = generateValidName(directoryToFix)
-            if newName != directoryToFix:
-                rename(mypath + directoryToFix, mypath + newName)
-            else:
-                sys.exit("Cannot find better name for '" + mypath + directoryToFix + "', this could be caused by wrong date, please fix it before going further, aborting...")
+            for directoryToFix in needFixDirectories:
+                newName = generateValidName(directoryToFix)
+                if newName != directoryToFix:
+                    rename(mypath + directoryToFix, mypath + newName)
+                else:
+                    sys.exit("Cannot find better name for '" + mypath + directoryToFix + "', this could be caused by wrong date, please fix it before going further, aborting...")
 
     step1finish = datetime.datetime.now()
     # step1ttb = step1finish - step1start
