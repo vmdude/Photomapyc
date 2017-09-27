@@ -159,7 +159,7 @@ def find_orphan_files():
     for rawFile in rawFiles:
         jpgFile = os.path.splitext(rawFile)[0] + '.JPG'
         if not os.path.isfile(jpgFile):
-            orphanRawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS")))
+            orphanRawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace(mypath, myDeletePath)))
             if not os.path.exists(orphanRawFileDirectory):
                 os.makedirs(orphanRawFileDirectory)
             # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
@@ -214,44 +214,60 @@ def separating_raw_files():
     print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
 
 
+# Usage
+def msg(name=None):                                                            
+    return '''main.py
+         [--startFolder, Pass argument startFolder]
+        '''
+
 # Main routine
-def Main():
-    if __name__ == '__main__':
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--startFolder')
-        args = parser.parse_args()
+parser = argparse.ArgumentParser(description='Process photos: EXIF-based renaming, RAW files split, ...', usage=msg())
+parser.add_argument('--startFolder', help='Start folder containing all photos subfolders that will be processed')
 
-    mypath = "Y:\\Download\\TODOPHOTOS\\"
-    myDeletePath = "Y:\\Download\\TODELETEPHOTOS\\"
-    myRawMovePath = "Y:\\Download\\TOMOVERAWPHOTOS\\"
+if not len(sys.argv) > 1:
+    parser.print_help()
+    exit()
 
-    # aRgument = PhotoFolder
-    # create PhotoFolderWorkDir \todelete
-    #                           \tomovePhotos
-    #                           \tomovePhotosRAW
+args = parser.parse_args()
 
+myRootPath = "Y:\\Download\\A_TRIER_PHOTOS\\"
+mypath = args.startFolder
+# aRgument = PhotoFolder
+# create PhotoFolderWorkDir \todelete
+#                           \tomovePhotos
+#                           \tomovePhotosRAW
 
+if not os.path.exists(args.startFolder):
+    print(bcolors.FAIL + "> Directory " + args.startFolder + " does not exist" + bcolors.ENDC)
 
-    if not os.path.exists(myDeletePath):
-        os.makedirs(myDeletePath)
+myDeletePath = myRootPath + "todelete\\"
+myRawMovePath = myRootPath + "tomovePhotosRAW\\"
+myJpgMovePath = myRootPath + "tomovePhotos\\"
 
-    if not os.path.exists(myRawMovePath):
-        os.makedirs(myRawMovePath)
+if not os.path.exists(myDeletePath):
+    os.makedirs(myDeletePath)
 
-    print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + bcolors.ENDC)
-    print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.ENDC)
+if not os.path.exists(myJpgMovePath):
+    os.makedirs(myJpgMovePath)
 
-    pattern = re.compile("^([A-Z][0-9]+)+$")
+if not os.path.exists(myRawMovePath):
+    os.makedirs(myRawMovePath)
 
-    # First step is directory naming check
-    directory_name_check()
+print(bcolors.HEADER + "> Starting photomapyc process on " + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + bcolors.ENDC)
+print(bcolors.HEADER + "> Selected root folder is '" + mypath + "'" + bcolors.ENDC)
 
-    # Second step is finding orphan files and removing them
-    find_orphan_files()
+pattern = re.compile("^([A-Z][0-9]+)+$")
 
-    # Thirs step is renaming photo based on EXIF tags
-    rename_photo_exif()
+# First step is directory naming check
+directory_name_check()
 
-    # Fourth step is separating JPG files from RAW files
-    separating_raw_files()
+# Second step is finding orphan files and removing them
+find_orphan_files()
+
+# Thirs step is renaming photo based on EXIF tags
+rename_photo_exif()
+exit()
+
+# Fourth step is separating JPG files from RAW files
+separating_raw_files()
 
