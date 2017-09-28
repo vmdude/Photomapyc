@@ -194,8 +194,8 @@ def rename_photo_exif():
                     f = open(join(os.path.join(mypath, folder), fileT), 'rb')
                     dict[join(os.path.join(mypath, folder), fileT)] = exifread.process_file(f)["EXIF DateTimeOriginal"].values
             for sorted_dict in sorted(dict.items(), key=operator.itemgetter(1)):
-                newName = os.path.join(folder, generateValidNameFromFolder(folder) + "_" + str(initialCount).rjust(3, "0") + ".jpg")
-                # os.rename(sorted_dict[0], newName)
+                newName = os.path.join(os.path.join(mypath, folder), generateValidNameFromFolder(folder) + "_" + str(initialCount).rjust(3, "0") + ".jpg")
+                os.rename(sorted_dict[0], newName)
                 print(bcolors.OKGREEN + "   Renaming file " + sorted_dict[0].replace(mypath, "") + " to " + newName.split("\\")[1] + bcolors.ENDC)
                 initialCount += 1
 
