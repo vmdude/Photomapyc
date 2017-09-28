@@ -286,8 +286,9 @@ find_orphan_files()
 
 # Thirs step is renaming photo based on EXIF tags
 rename_photo_exif()
-exit()
 
 # Fourth step is separating JPG files from RAW files
 separating_raw_files()
 
+rd = dateutil.relativedelta.relativedelta (step4finish, step1start)
+print(bcolors.HEADER + "> Completed in '" + generateHumanReadableDatetime(rd) + bcolors.ENDC)
