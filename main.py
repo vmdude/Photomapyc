@@ -163,7 +163,7 @@ def find_orphan_files():
             if not os.path.exists(orphanRawFileDirectory):
                 os.makedirs(orphanRawFileDirectory)
             # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
-            print(bcolors.OKGREEN + "   Orphan file moved: " + rawFile)
+            print(bcolors.OKGREEN + "   Orphan file moved: " + rawFile + bcolors.ENDC)
             orphansRawFiles.append(rawFile)
 
     for orphanRawFile in orphansRawFiles:
@@ -206,7 +206,27 @@ def separating_raw_files():
     print(bcolors.OKBLUE + ">> Step 4: Separating photos JPG<>RAW")
     step4start = datetime.datetime.now()
 
+    for dirpath, dirs, files in os.walk(mypath):
+        files = [f for f in files if f != '.DS_Store']
+        for name in files:
+            if name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                jpgFiles.append(os.path.join(dirpath, name))
+            else:
+                rawFiles.append(os.path.join(dirpath, name))
 
+    for rawFile in rawFiles:
+        rawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace(mypath, myRawMovePath)))
+        if not os.path.exists(rawFileDirectory):
+            os.makedirs(rawFileDirectory)
+        # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
+        print(bcolors.OKGREEN + "   RAW file moved: " + rawFile + bcolors.ENDC)
+
+    for jpgFile in jpgFiles:
+        jpgFileDirectory = os.path.dirname(os.path.abspath(jpgFile.replace(mypath, myJpgMovePath)))
+        if not os.path.exists(jpgFileDirectory):
+            os.makedirs(jpgFileDirectory)
+        # os.rename(jpgFile, jpgFile.replace("TODOPHOTOS", jpgFileDirectory))
+        print(bcolors.OKGREEN + "   JPG file moved: " + jpgFile + bcolors.ENDC)
 
 
     step4finish = datetime.datetime.now()
