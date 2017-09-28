@@ -231,7 +231,6 @@ def separating_raw_files():
         # os.rename(jpgFile, jpgFile.replace(mypath, jpgFileDirectory))
         print(bcolors.OKGREEN + "   JPG file moved: " + jpgFile + " to " + myJpgMovePath + bcolors.ENDC)
 
-
     step4finish = datetime.datetime.now()
     rd = dateutil.relativedelta.relativedelta (step4finish, step4start)
     print(bcolors.OKBLUE + ">> Step 4 completed successfully in " + generateHumanReadableDatetime(rd) + bcolors.ENDC)
