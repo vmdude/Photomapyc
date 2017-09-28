@@ -14,6 +14,7 @@ from os.path import isfile, join
 from time import gmtime, strftime
 from colorama import init
 init()
+start = datetime.datetime.now()
 
 # Custom class for console color support
 class bcolors:
@@ -220,15 +221,15 @@ def separating_raw_files():
         rawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace(mypath, myRawMovePath)))
         if not os.path.exists(rawFileDirectory):
             os.makedirs(rawFileDirectory)
-        # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
-        print(bcolors.OKGREEN + "   RAW file moved: " + rawFile + bcolors.ENDC)
+        # os.rename(rawFile, rawFile.replace(mypath, myRawMovePath))
+        print(bcolors.OKGREEN + "   RAW file moved: " + rawFile + " to " + myRawMovePath + bcolors.ENDC)
 
     for jpgFile in jpgFiles:
         jpgFileDirectory = os.path.dirname(os.path.abspath(jpgFile.replace(mypath, myJpgMovePath)))
         if not os.path.exists(jpgFileDirectory):
             os.makedirs(jpgFileDirectory)
-        # os.rename(jpgFile, jpgFile.replace("TODOPHOTOS", jpgFileDirectory))
-        print(bcolors.OKGREEN + "   JPG file moved: " + jpgFile + bcolors.ENDC)
+        # os.rename(jpgFile, jpgFile.replace(mypath, jpgFileDirectory))
+        print(bcolors.OKGREEN + "   JPG file moved: " + jpgFile + " to " + myJpgMovePath + bcolors.ENDC)
 
 
     step4finish = datetime.datetime.now()
@@ -292,5 +293,7 @@ rename_photo_exif()
 # Fourth step is separating JPG files from RAW files
 separating_raw_files()
 
-rd = dateutil.relativedelta.relativedelta (step4finish, step1start)
+finish = datetime.datetime.now()
+
+rd = dateutil.relativedelta.relativedelta (finish, start)
 print(bcolors.HEADER + "> Completed in '" + generateHumanReadableDatetime(rd) + bcolors.ENDC)
