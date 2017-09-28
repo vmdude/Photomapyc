@@ -163,7 +163,7 @@ def find_orphan_files():
             orphanRawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace(mypath, myDeletePath)))
             if not os.path.exists(orphanRawFileDirectory):
                 os.makedirs(orphanRawFileDirectory)
-            # os.rename(rawFile, rawFile.replace("TODOPHOTOS", "TODELETEPHOTOS"))
+            os.rename(rawFile, rawFile.replace(mypath, myDeletePath))
             print(bcolors.OKGREEN + "   Orphan file moved: " + rawFile + bcolors.ENDC)
             orphansRawFiles.append(rawFile)
 
@@ -195,7 +195,7 @@ def rename_photo_exif():
                     dict[join(os.path.join(mypath, folder), fileT)] = exifread.process_file(f)["EXIF DateTimeOriginal"].values
             for sorted_dict in sorted(dict.items(), key=operator.itemgetter(1)):
                 newName = os.path.join(folder, generateValidNameFromFolder(folder) + "_" + str(initialCount).rjust(3, "0") + ".jpg")
-                # os.rename(sorted_dict[0], newName)
+                os.rename(sorted_dict[0], newName)
                 print(bcolors.OKGREEN + "   Renaming file " + sorted_dict[0].replace(mypath, "") + " to " + newName.split("\\")[1] + bcolors.ENDC)
                 initialCount += 1
 
@@ -221,14 +221,14 @@ def separating_raw_files():
         rawFileDirectory = os.path.dirname(os.path.abspath(rawFile.replace(mypath, myRawMovePath)))
         if not os.path.exists(rawFileDirectory):
             os.makedirs(rawFileDirectory)
-        # os.rename(rawFile, rawFile.replace(mypath, myRawMovePath))
+        os.rename(rawFile, rawFile.replace(mypath, myRawMovePath))
         print(bcolors.OKGREEN + "   RAW file moved: " + rawFile + " to " + myRawMovePath + bcolors.ENDC)
 
     for jpgFile in jpgFiles:
         jpgFileDirectory = os.path.dirname(os.path.abspath(jpgFile.replace(mypath, myJpgMovePath)))
         if not os.path.exists(jpgFileDirectory):
             os.makedirs(jpgFileDirectory)
-        # os.rename(jpgFile, jpgFile.replace(mypath, jpgFileDirectory))
+        os.rename(jpgFile, jpgFile.replace(mypath, jpgFileDirectory))
         print(bcolors.OKGREEN + "   JPG file moved: " + jpgFile + " to " + myJpgMovePath + bcolors.ENDC)
 
     step4finish = datetime.datetime.now()
