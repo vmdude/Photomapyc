@@ -205,6 +205,8 @@ def rename_photo_exif():
 def separating_raw_files():
     print(bcolors.OKBLUE + ">> Step 4: Separating photos JPG<>RAW")
     step4start = datetime.datetime.now()
+    jpgFiles = []
+    rawFiles = []
 
     for dirpath, dirs, files in os.walk(mypath):
         files = [f for f in files if f != '.DS_Store']
